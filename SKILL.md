@@ -50,6 +50,28 @@ sendme send ~/Documents/report.pdf
 
 For directories, sendme bundles the entire folder recursively.
 
+### Non-Interactive / Headless Environments
+
+`sendme` requires a TTY — it enables raw terminal mode for interactive features. In non-interactive environments (scripts, Docker, CI, agents), it will fail with:
+
+```
+Failed to enable raw mode: No such device or address
+```
+
+**Use the bundled PTY wrapper script instead:**
+
+```bash
+python3 scripts/sendme_send.py <path>
+```
+
+This provides a pseudo-terminal so sendme works without an interactive shell. The script prints the ticket to stdout.
+
+**Alternative** — use `script` to provide a PTY:
+
+```bash
+script -q -c "sendme send myfile.txt" /dev/null
+```
+
 ## Receiving Files
 
 ```bash
