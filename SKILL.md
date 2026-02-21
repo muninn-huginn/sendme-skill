@@ -58,18 +58,49 @@ For directories, sendme bundles the entire folder recursively.
 Failed to enable raw mode: No such device or address
 ```
 
-**Use the bundled PTY wrapper script instead:**
-
-```bash
-python3 scripts/sendme_send.py <path>
-```
-
-This provides a pseudo-terminal so sendme works without an interactive shell. The script prints the ticket to stdout.
-
-**Alternative** — use `script` to provide a PTY:
+**Use `script` to provide a PTY:**
 
 ```bash
 script -q -c "sendme send myfile.txt" /dev/null
+```
+
+**Or use a Python PTY wrapper** to send and extract the ticket programmatically:
+
+```python
+import os, pty, select, signal, sys
+
+def sendme_send(path):
+    pid, fd = pty.fork()
+    if pid == 0:
+        os.execvp("sendme", ["sendme", "send", path])
+    output = b""
+    ticket = None
+    while True:
+        ready, _, _ = select.select([fd], [], [], 0.5)
+        if ready:
+            try:
+                chunk = os.read(fd, 4096)
+                if not chunk:
+                    break
+                output += chunk
+                for line in output.decode(errors="replace").split("\n"):
+                    if "sendme receive blob" in line:
+                        ticket = line.strip().replace("sendme receive ", "")
+                        print(ticket)
+                        sys.stdout.flush()
+            except OSError:
+                break
+        elif ticket:
+            try:
+                os.waitpid(pid, os.WNOHANG)
+            except ChildProcessError:
+                break
+    try:
+        os.kill(pid, signal.SIGTERM)
+        os.waitpid(pid, 0)
+    except (ProcessLookupError, ChildProcessError):
+        pass
+    return ticket
 ```
 
 ## Receiving Files
