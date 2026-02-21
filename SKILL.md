@@ -20,6 +20,7 @@ metadata:
 
 Peer-to-peer file transfer using [iroh](https://www.iroh.computer/sendme). No server uploads — files stream directly between machines via encrypted connections with automatic NAT traversal.
 
+
 ## Installation
 
 If `sendme` is not installed:
