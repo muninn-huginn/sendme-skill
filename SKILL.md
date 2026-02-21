@@ -25,17 +25,10 @@ Peer-to-peer file transfer using [iroh](https://www.iroh.computer/sendme). No se
 If `sendme` is not installed:
 
 ```bash
-# macOS/Linux (preferred)
 brew install sendme
-
-# Alternative: shell installer
-curl -fsSL https://iroh.computer/sendme.sh | sh
-
-# Alternative: via cargo
-cargo install sendme
 ```
 
-On Windows PowerShell: `iwr https://www.iroh.computer/sendme.ps1 -useb | iex`
+Alternatively, install via Cargo: `cargo install sendme`
 
 ## Sending Files
 
