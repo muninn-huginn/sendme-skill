@@ -59,13 +59,7 @@ For directories, sendme bundles the entire folder recursively.
 Failed to enable raw mode: No such device or address
 ```
 
-**Use `script` to provide a PTY:**
-
-```bash
-script -q -c "sendme send myfile.txt" /dev/null
-```
-
-**Or use a Python PTY wrapper** to send and extract the ticket programmatically:
+**Use the Python PTY wrapper** to provide a PTY and extract the ticket programmatically. This uses `os.execvp()` to invoke `sendme` directly without shell interpretation, avoiding shell injection risks:
 
 ```python
 import os, pty, select, signal, sys
